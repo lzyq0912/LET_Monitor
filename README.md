@@ -11,6 +11,32 @@
 - 防止重复通知
 - 定时检查更新（默认每5秒）
 
+## 目录结构
+
+```angular2html
+LET_Monitor/
+│
+├── config/
+│   ├── config.yaml         # 实际使用的配置文件
+│   └── config.yaml.example # 配置文件模板
+│
+├── logs/
+│   ├── .gitkeep           # 保持日志目录存在
+│   └── forum_monitor.log  # 运行时生成的日志文件
+│
+├── src/
+│   ├── __init__.py        # Python 包标识文件
+│   ├── monitor.py         # 核心监控逻辑
+│   ├── notification.py    # 通知服务实现
+│   └── utils.py          # 工具函数
+│
+├── .gitignore            # Git 忽略文件配置
+├── README.md            # 项目说明文档
+├── requirements.txt     # 项目依赖列表
+└── run.py              # 程序入口文件
+```
+
+
 ## 安装
 
 1. 克隆仓库：

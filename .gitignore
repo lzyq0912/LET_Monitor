@@ -2,15 +2,25 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
 venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # Logs
 logs/*
 !logs/.gitkeep
 
-# IDE
-.vscode/
-.idea/
-
-# Environment
+# Config
+config/config.yaml
 .env
+
+# OS
+.DS_Store
+Thumbs.db
