@@ -20,12 +20,14 @@ LET_Monitor/
 │   ├── config.yaml         # 实际使用的配置文件
 │   └── config.yaml.example # 配置文件模板
 │
+├── data/
+│   └── processed_comments.db  # SQLite数据库文件，运行时生成
+│
 ├── logs/
 │   ├── .gitkeep           # 保持日志目录存在
 │   └── forum_monitor.log  # 运行时生成的日志文件
 │
 ├── src/
-│   ├── __init__.py        # Python 包标识文件
 │   ├── monitor.py         # 核心监控逻辑
 │   ├── notification.py    # 通知服务实现
 │   └── utils.py          # 工具函数

@@ -1,0 +1,11 @@
+logs/              # 运行时生成的日志，不需要包含在镜像中
+data/              # 数据库文件，不需要包含在镜像中
+config/config.yaml # 实际配置文件（包含敏感信息）
+.git/             # git 版本控制文件
+.gitignore
+__pycache__/      # Python 缓存文件
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.log

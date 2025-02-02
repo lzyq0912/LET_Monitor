@@ -4,6 +4,23 @@ __pycache__/
 *$py.class
 *.so
 .Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
 venv/
 ENV/
 
@@ -13,17 +30,7 @@ ENV/
 *.swp
 *.swo
 
-# Logs
-logs/*
-!logs/.gitkeep
-
-# Config
+# Project specific
+logs/*.log
+data/*.db
 config/config.yaml
-.env
-
-# OS
-.DS_Store
-Thumbs.db
-
-config/.cookies
-data/processed_comments.db

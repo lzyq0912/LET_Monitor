@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  forum-monitor:
+    build: .  # 这里使用 build: . 而不是 image
+    environment:
+      - FORUM_USERNAME=lzyq0912@gmail.com
+      - FORUM_PASSWORD=liu20010912
+      - TELEGRAM_BOT_TOKEN=7931625820:AAHpmo67HIEmNyVYx9XSDbI1_s3gnG9wmEU
+      - TELEGRAM_CHANNEL_ID=-1002486879587
+      - CHECK_INTERVAL=5
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped

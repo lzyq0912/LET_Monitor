@@ -1,6 +1,6 @@
 forum:
-  username: "lzyq0912@gmail.com"
-  password: "liu20010912"
+  username: "123"
+  password: "123"
   base_url: "https://lowendtalk.com"
   timeout: 30  # 请求超时时间（秒）
   retry_attempts: 3  # 重试次数
@@ -11,6 +11,7 @@ monitoring:
       keywords:
         - "sale"
         - "Coupon"
+        - "deal"
     - username: "CycloneJoker"
       keywords:
         - "nice"
@@ -29,8 +30,8 @@ notification:
 
   telegram:
     enabled: true
-    bot_token: "7931625820:AAHpmo67HIEmNyVYx9XSDbI1_s3gnG9wmEU"
-    channel_id: "-1002486879587"
+    bot_token: "123"
+    channel_id: "-1223"
 
 logging:
   level: "DEBUG"  # 改为 DEBUG
