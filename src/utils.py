@@ -21,7 +21,7 @@ def setup_logging(config):
         log_file,
         maxBytes=5 * 1024 * 1024,  # 5MB
         backupCount=5,
-        encoding='utf-8'  # 指定编码
+        encoding='utf-8'
     )
     file_handler.setFormatter(formatter)
 
@@ -40,6 +40,12 @@ def setup_logging(config):
     # 添加新的处理器
     root_logger.addHandler(file_handler)
     root_logger.addHandler(console_handler)
+
+    # 设置第三方库的日志级别为 WARNING 或更高
+    logging.getLogger('asyncio').setLevel(logging.WARNING)
+    logging.getLogger('telegram').setLevel(logging.WARNING)
+    logging.getLogger('httpcore').setLevel(logging.WARNING)
+    logging.getLogger('httpx').setLevel(logging.WARNING)
 
     return logging.getLogger(__name__)
 

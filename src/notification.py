@@ -2,9 +2,9 @@ import logging
 from telegram import Bot
 from telegram.constants import ParseMode
 import asyncio
+import time
 
 logger = logging.getLogger(__name__)
-
 
 class NotificationService:
     def __init__(self, config):
@@ -24,34 +24,41 @@ class NotificationService:
         logger.info("开始发送通知...")
         if self.config['notification']['telegram']['enabled']:
             logger.info("尝试发送Telegram通知...")
-            self._send_telegram_sync(message)
+            return self._send_telegram_sync(message)  # 添加 return
+        return False  # 如果没有启用 telegram，返回 False
 
     def _send_telegram_sync(self, message):
         async def send_message():
             if not self.bot:
-                logger.error("Telegram bot 未初始化")
-                return False
+                self.setup_telegram()
+                if not self.bot:
+                    return False
 
             try:
-                async with self.bot:
-                    await self.bot.send_message(
-                        chat_id=self.config['notification']['telegram']['channel_id'],
-                        text=message,
-                        parse_mode=ParseMode.HTML
-                    )
-                logger.info("Telegram消息发送成功")
-                return True
+                max_retries = 3
+                retry_delay = 2
+
+                for attempt in range(max_retries):
+                    try:
+                        async with self.bot:
+                            await self.bot.send_message(
+                                chat_id=self.config['notification']['telegram']['channel_id'],
+                                text=message,
+                                parse_mode=ParseMode.HTML
+                            )
+                            await asyncio.sleep(1)  # 添加延迟避免频率限制
+                        return True
+                    except Exception as e:
+                        if attempt < max_retries - 1:
+                            await asyncio.sleep(retry_delay * (attempt + 1))
+                            continue
+                        raise e
             except Exception as e:
                 logger.error(f"发送消息失败: {e}")
                 return False
 
         try:
-            asyncio.run(send_message())
+            return asyncio.run(send_message())
         except Exception as e:
             logger.error(f"发送过程出错: {e}")
-            # 如果失败，尝试重新初始化并重试
-            try:
-                self.setup_telegram()
-                asyncio.run(send_message())
-            except Exception as retry_e:
-                logger.error(f"重试发送失败: {retry_e}")
+            return False

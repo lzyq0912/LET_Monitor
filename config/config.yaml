@@ -2,6 +2,8 @@ forum:
   username: "lzyq0912@gmail.com"
   password: "liu20010912"
   base_url: "https://lowendtalk.com"
+  timeout: 30  # 请求超时时间（秒）
+  retry_attempts: 3  # 重试次数
 
 monitoring:
   users:
@@ -35,3 +37,12 @@ logging:
   file: "logs/forum_monitor.log"
   max_size_mb: 5
   backup_count: 5
+
+proxy:
+  enabled: false
+  http: "http://127.0.0.1:7890"
+  https: "http://127.0.0.1:7890"
+
+debug:
+  enabled: true
+  verbose: true
