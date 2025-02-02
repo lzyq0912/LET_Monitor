@@ -8,8 +8,6 @@ services:
       - FORUM_PASSWORD=liu20010912
       - TELEGRAM_BOT_TOKEN=7931625820:AAHpmo67HIEmNyVYx9XSDbI1_s3gnG9wmEU
       - TELEGRAM_CHANNEL_ID=-1002486879587
-      - CHECK_INTERVAL=5
-      - LOG_LEVEL=DEBUG
     volumes:
       - ./logs:/app/logs
       - ./data:/app/data
