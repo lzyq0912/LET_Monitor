@@ -1,0 +1,49 @@
+forum:
+  username: "123"
+  password: "123"
+  base_url: "https://lowendtalk.com"
+  timeout: 30  # 请求超时时间（秒）
+  retry_attempts: 3  # 重试次数
+
+monitoring:
+  users:
+    - username: "NDTN"
+      keywords:
+        - "sale"
+        - "Coupon"
+        - "deal"
+    - username: "CycloneJoker"
+      keywords:
+        - "nice"
+        - "god"
+  check_interval: 5  # seconds
+  max_comments: 10  # 最多检查最近的10条评论
+
+notification:
+  email:
+    enabled: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    from_address: "lzyq0912@gmail.com"
+    to_address: "lzyq0912@gmail.com"
+    app_password: ""  # Gmail应用专用密码
+
+  telegram:
+    enabled: true
+    bot_token: "123"
+    channel_id: "-1223"
+
+logging:
+  level: "DEBUG"  # 改为 DEBUG
+  file: "logs/forum_monitor.log"
+  max_size_mb: 5
+  backup_count: 5
+
+proxy:
+  enabled: false
+  http: "http://127.0.0.1:7890"
+  https: "http://127.0.0.1:7890"
+
+debug:
+  enabled: true
+  verbose: true
