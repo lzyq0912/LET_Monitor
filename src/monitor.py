@@ -159,84 +159,87 @@ class ForumMonitor:
             return False
 
     def check_new_comments(self):
-    try:
-        logger.info("开始检查新评论...")
-        for user_config in self.config['monitoring']['users']:
-            username = user_config['username']
-            logger.info(f"正在检查用户 {username} 的评论...")
+        try:
+            logger.info("开始检查新评论...")
+            for user_config in self.config['monitoring']['users']:
+                username = user_config['username']
+                keywords = user_config['keywords']
+                logger.info(f"正在检查用户 {username} 的评论...")
 
-            url = f"{self.config['forum']['base_url']}/profile/comments/{username}"
-            headers = {
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Encoding': 'identity',
-                'Accept-Language': 'en-US,en;q=0.9',
-                'Cache-Control': 'no-cache',
-                'Connection': 'keep-alive'
-            }
+                url = f"{self.config['forum']['base_url']}/profile/comments/{username}"
+                headers = {
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Accept-Encoding': 'identity',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive'
+                }
 
-            response = self.scraper.get(url, headers=headers)
-            if response.status_code != 200:
-                logger.error(f"获取用户页面失败: {response.status_code}")
-                continue
-
-            try:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                comments = soup.find_all('li', id=lambda x: x and x.startswith('Comment_'))
-
-                if not comments:
-                    logger.info(f"用户 {username} 暂无评论")
+                response = self.scraper.get(url, headers=headers)
+                if response.status_code != 200:
+                    logger.error(f"获取用户页面失败: {response.status_code}")
                     continue
 
-                comments = comments[:self.max_comments]
-                logger.info(f"用户 {username} 找到 {len(comments)} 条评论")
+                try:
+                    soup = BeautifulSoup(response.text, 'html.parser')
+                    comments = soup.find_all('li', id=lambda x: x and x.startswith('Comment_'))
 
-                for comment in comments[:self.max_comments]:
-                    comment_id = comment.get('id', '').replace('Comment_', '')
-
-                    if self.is_comment_processed(comment_id):
-                        logger.debug(f"跳过已处理的评论 {comment_id}")
+                    if not comments:
+                        logger.info(f"用户 {username} 暂无评论")
                         continue
 
-                    message_div = comment.find('div', class_='Message')
-                    meta_div = comment.find('div', class_='Meta')
+                    comments = comments[:self.max_comments]
+                    logger.info(f"用户 {username} 找到 {len(comments)} 条评论")
 
-                    if message_div and meta_div:
-                        comment_text = message_div.text.strip()
-                        meta_items = meta_div.find_all('span', class_='MItem')
-                        comment_time = meta_items[-1].text.strip() if meta_items else "Unknown time"
+                    for comment in comments[:self.max_comments]:
+                        comment_id = comment.get('id', '').replace('Comment_', '')
 
-                        logger.info(f"发现新评论! 用户:{username}")
-                        discussion_link = None
-                        for item in meta_items:
-                            if 'in' in item.text and item.find('a'):
-                                discussion_link = item.find('a')
-                                break
+                        if self.is_comment_processed(comment_id):
+                            logger.debug(f"跳过已处理的评论 {comment_id}")
+                            continue
 
-                        discussion_title = discussion_link.text.strip() if discussion_link else "Unknown Discussion"
-                        notification_message = f"""新评论提醒:
+                        message_div = comment.find('div', class_='Message')
+                        meta_div = comment.find('div', class_='Meta')
+
+                        if message_div and meta_div:
+                            comment_text = message_div.text.strip()
+                            meta_items = meta_div.find_all('span', class_='MItem')
+                            comment_time = meta_items[-1].text.strip() if meta_items else "Unknown time"
+
+                            if self.contains_keywords(comment_text, keywords):
+                                logger.info(f"发现匹配的评论! 用户:{username}")
+                                discussion_link = None
+                                for item in meta_items:
+                                    if 'in' in item.text and item.find('a'):
+                                        discussion_link = item.find('a')
+                                        break
+
+                                discussion_title = discussion_link.text.strip() if discussion_link else "Unknown Discussion"
+                                notification_message = f"""新评论提醒:
 用户: {username}
 时间: {comment_time}
 主题: {discussion_title}
 内容: {comment_text}
 链接: {self.config['forum']['base_url']}/discussion/comment/{comment_id}#Comment_{comment_id}"""
 
-                        if self.notifier.notify(notification_message):
-                            logger.info("通知发送成功")
-                        else:
-                            logger.error("通知发送失败")
+                                if self.notifier.notify(notification_message):
+                                    logger.info("通知发送成功")
+                                else:
+                                    logger.error("通知发送失败")
 
-                        self.mark_comment_processed(comment_id)
+                            # 无论是否匹配关键词，都标记为已处理
+                            self.mark_comment_processed(comment_id)
 
-                logger.info(f"用户 {username} 的评论检查完成")
+                    logger.info(f"用户 {username} 的评论检查完成")
 
-            except Exception as e:
-                logger.error(f"处理用户 {username} 的评论时出错: {e}")
-                continue
+                except Exception as e:
+                    logger.error(f"处理用户 {username} 的评论时出错: {e}")
+                    continue
 
-        logger.info("所有用户的评论检查完成")
+            logger.info("所有用户的评论检查完成")
 
-    except Exception as e:
-        logger.error(f"检查评论时出错: {e}")
+        except Exception as e:
+            logger.error(f"检查评论时出错: {e}")
 
 
     # def contains_keywords(self, text, keywords):
