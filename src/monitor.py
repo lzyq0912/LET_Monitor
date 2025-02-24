@@ -206,26 +206,26 @@ class ForumMonitor:
                             meta_items = meta_div.find_all('span', class_='MItem')
                             comment_time = meta_items[-1].text.strip() if meta_items else "Unknown time"
 
-                            if self.contains_keywords(comment_text, keywords):
-                                logger.info(f"发现匹配的评论! 用户:{username}")
-                                discussion_link = None
-                                for item in meta_items:
-                                    if 'in' in item.text and item.find('a'):
-                                        discussion_link = item.find('a')
-                                        break
+                            # if self.contains_keywords(comment_text, keywords):
+                            logger.info(f"发现匹配的评论! 用户:{username}")
+                            discussion_link = None
+                            for item in meta_items:
+                                if 'in' in item.text and item.find('a'):
+                                    discussion_link = item.find('a')
+                                    break
 
-                                discussion_title = discussion_link.text.strip() if discussion_link else "Unknown Discussion"
-                                notification_message = f"""新评论提醒:
+                            discussion_title = discussion_link.text.strip() if discussion_link else "Unknown Discussion"
+                            notification_message = f"""新评论提醒:
 用户: {username}
 时间: {comment_time}
 主题: {discussion_title}
 内容: {comment_text}
 链接: {self.config['forum']['base_url']}/discussion/comment/{comment_id}#Comment_{comment_id}"""
 
-                                if self.notifier.notify(notification_message):
-                                    logger.info("通知发送成功")
-                                else:
-                                    logger.error("通知发送失败")
+                            if self.notifier.notify(notification_message):
+                                logger.info("通知发送成功")
+                            else:
+                                logger.error("通知发送失败")
 
                             # 无论是否匹配关键词，都标记为已处理
                             self.mark_comment_processed(comment_id)
